@@ -13,6 +13,7 @@ import com.example.websiteone.model.Lead;
 import com.example.websiteone.repo.LeadRepository;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/leads")
 public class LeadController {
 
