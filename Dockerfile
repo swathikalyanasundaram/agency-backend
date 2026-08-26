@@ -1,17 +1,22 @@
-# Stage 1: Build application with Maven
+# Stage 1: Build the Maven application
 FROM maven:3.9-eclipse-temurin-17 AS build
 WORKDIR /app
 
-# Copy project files
-COPY pom.xml .
-COPY src ./src
+# Copy all repository files into the container
+COPY . .
 
-# Build JAR file
-RUN mvn clean package -DskipTests
+# Find pom.xml and build the project regardless of subfolder structure
+RUN if [ -f "pom.xml" ]; then \
+        mvn clean package -DskipTests; \
+    elif [ -f "backend/pom.xml" ]; then \
+        cd backend && mvn clean package -DskipTests; \
+    else \
+        echo "No pom.xml found!"; exit 1; \
+    fi
 
-# Stage 2: Run application
+# Stage 2: Lightweight runtime image
 FROM eclipse-temurin:17-jre
 WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
+COPY --from=build /app/**/target/*.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
