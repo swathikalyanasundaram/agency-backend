@@ -22,10 +22,11 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/api/leads").permitAll() // Anyone can submit form
-                        .requestMatchers(HttpMethod.GET, "/api/leads").hasRole("ADMIN") // ONLY Admin can view leads
+                        .requestMatchers(HttpMethod.POST, "/api/leads").permitAll() // Form submissions remain public
+                        .requestMatchers(HttpMethod.GET, "/api/leads").hasRole("ADMIN") // Require ADMIN role to list
+                                                                                        // leads
                         .anyRequest().authenticated())
-                .httpBasic(Customizer.withDefaults());
+                .httpBasic(Customizer.withDefaults()); // Return 401 on invalid Basic Auth headers
 
         return http.build();
     }
@@ -34,7 +35,7 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService() {
         UserDetails admin = User.withDefaultPasswordEncoder()
                 .username("admin")
-                .password("SuperSecret123") // Set your actual secret password here
+                .password("Admin@123") // Set your chosen password here
                 .roles("ADMIN")
                 .build();
 
