@@ -21,28 +21,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Enable CORS and disable CSRF for REST API calls
-                .cors(cors -> cors.configurationSource(request -> {
-                    CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowedOrigins(List.of("https://yezhuththu.site",
-                            "https://agency-frontend-navy.vercel.app", "http://localhost:5500"));
-                    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                    config.setAllowedHeaders(List.of("*"));
-                    config.setAllowCredentials(true);
-                    return config;
-                }))
+                .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Allow public access to form submissions
                         .requestMatchers(HttpMethod.POST, "/api/leads").permitAll()
-                        // Protect GET /api/leads so only logged-in ADMINs can access leads
-                        .requestMatchers(HttpMethod.GET, "/api/leads").hasRole("ADMIN")
-                        .anyRequest().authenticated())
-                // Enable Spring Security default login form
-                .formLogin(form -> form
-                        .defaultSuccessUrl("https://yezhuththu.site/admin.html", true)
-                        .permitAll())
-                .logout(logout -> logout.permitAll());
+                        .requestMatchers(HttpMethod.GET, "/api/leads").authenticated())
+                .httpBasic(Customizer.withDefaults()); // Enables HTTP Basic Auth popup
 
         return http.build();
     }
