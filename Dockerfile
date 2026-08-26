@@ -1,22 +1,17 @@
-# Stage 1: Build the Maven application
-FROM maven:3.9-eclipse-temurin-17 AS build
+# Stage 1: Build the application using Java 21
+FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /app
 
-# Copy all repository files into the container
-COPY . .
+# Copy pom.xml and source code
+COPY pom.xml .
+COPY src ./src
 
-# Find pom.xml and build the project regardless of subfolder structure
-RUN if [ -f "pom.xml" ]; then \
-        mvn clean package -DskipTests; \
-    elif [ -f "backend/pom.xml" ]; then \
-        cd backend && mvn clean package -DskipTests; \
-    else \
-        echo "No pom.xml found!"; exit 1; \
-    fi
+# Build JAR file skipping tests
+RUN mvn clean package -DskipTests
 
-# Stage 2: Lightweight runtime image
-FROM eclipse-temurin:17-jre
+# Stage 2: Run application using Java 21 runtime
+FROM eclipse-temurin:21-jre
 WORKDIR /app
-COPY --from=build /app/**/target/*.jar app.jar
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
