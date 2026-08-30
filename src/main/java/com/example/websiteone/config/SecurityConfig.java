@@ -6,10 +6,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -22,14 +18,16 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // <-- 1. Allow all CORS preflight checks
-                        .requestMatchers(HttpMethod.POST, "/api/leads").permitAll() // Form submissions remain public
-                        .requestMatchers(HttpMethod.GET, "/api/leads").hasRole("ADMIN") // Require ADMIN role to list leads
-                        .anyRequest().authenticated())
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // 1. Allow all preflight OPTIONS requests
+                        .requestMatchers(HttpMethod.POST, "/api/leads").permitAll() // 2. Explicitly allow public lead creation
+                        .requestMatchers(HttpMethod.GET, "/api/leads").hasRole("ADMIN") // 3. Protect GET requests for admins only
+                        .anyRequest().authenticated()
+                )
                 .httpBasic(Customizer.withDefaults());
-    
+
         return http.build();
     }
+}
 
     @Bean
     public UserDetailsService userDetailsService() {
