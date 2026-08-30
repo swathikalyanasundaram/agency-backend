@@ -33,4 +33,7 @@ public class Lead {
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Column(name = "project_overview", columnDefinition = "TEXT")
+    private String projectOverview;
+
 }
