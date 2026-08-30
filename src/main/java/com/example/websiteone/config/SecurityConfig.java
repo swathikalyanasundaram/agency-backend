@@ -22,12 +22,12 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // <-- 1. Allow all CORS preflight checks
                         .requestMatchers(HttpMethod.POST, "/api/leads").permitAll() // Form submissions remain public
-                        .requestMatchers(HttpMethod.GET, "/api/leads").hasRole("ADMIN") // Require ADMIN role to list
-                                                                                        // leads
+                        .requestMatchers(HttpMethod.GET, "/api/leads").hasRole("ADMIN") // Require ADMIN role to list leads
                         .anyRequest().authenticated())
-                .httpBasic(Customizer.withDefaults()); // Return 401 on invalid Basic Auth headers
-
+                .httpBasic(Customizer.withDefaults());
+    
         return http.build();
     }
 
