@@ -19,27 +19,26 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Allow preflight CORS
-                        .requestMatchers(HttpMethod.POST, "/api/leads").permitAll() // Public lead creation
-                        .requestMatchers(HttpMethod.GET, "/api/leads").hasRole("ADMIN") // Admin only
-                        .anyRequest().authenticated()
-                )
-                .httpBasic(Customizer.withDefaults());
-
+            .cors(Customizer.withDefaults())
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Allow preflight CORS requests
+                .requestMatchers("/api/inquiries/**", "/api/**").permitAll() // Allow public form submissions & all API routes
+                .anyRequest().authenticated()
+            )
+            .httpBasic(Customizer.withDefaults());
+            
         return http.build();
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
         UserDetails admin = User.withDefaultPasswordEncoder()
-                .username("admin")
-                .password("Admin@123")
-                .roles("ADMIN")
-                .build();
-
+            .username("admin")
+            .password("Admin@123")
+            .roles("ADMIN")
+            .build();
+            
         return new InMemoryUserDetailsManager(admin);
     }
 }
