@@ -1,0 +1,6 @@
+com\example\websiteone\WebsiteoneApplication.class
+com\example\websiteone\controller\LeadController.class
+com\example\websiteone\model\Lead.class
+com\example\websiteone\config\CorsConfig.class
+com\example\websiteone\repo\LeadRepository.class
+com\example\websiteone\config\SecurityConfig.class
