@@ -1,4 +1,4 @@
-package com.example.websiteone.config; // (Adjust package to match yours)
+package com.example.websiteone.config; // Update package if yours differs
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,12 +13,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // Disable CSRF for external API calls
+            .csrf(csrf -> csrf.disable()) // Disable CSRF protection
             .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll() // Permit all incoming requests without authentication
+                .anyRequest().permitAll() // Allow everything without login
             )
-            .httpBasic(httpBasic -> httpBasic.disable()) // Disable the basic auth pop-up/challenge
-            .formLogin(formLogin -> formLogin.disable()); // Disable default login form redirects
+            .httpBasic(httpBasic -> httpBasic.disable()) // Turn off basic auth login prompt
+            .formLogin(formLogin -> formLogin.disable()); // Turn off default form login
 
         return http.build();
     }
