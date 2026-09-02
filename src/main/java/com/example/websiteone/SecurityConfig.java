@@ -1,4 +1,4 @@
-package com.example.websiteone;
+package com.example.websiteone.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
